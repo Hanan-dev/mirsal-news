@@ -3,23 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f6f6f2" />
-    <meta name="description" content="A calmer, clearer way to keep up with the stories shaping your day." />
-    <title>Signal — your daily briefing</title>
+    <meta name="theme-color" content="#f6f8fc" />
+    <meta name="description" content="Mirsal brings the stories shaping your day into one clear, personal news edition." />
+    <title>Mirsal — your daily briefing</title>
+    <link rel="icon" type="image/png" href="./assets/mirsal-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="app.js" defer></script>
   </head>
   <body>
     <header class="topbar">
-      <a class="wordmark" href="#top" aria-label="Signal home"><span class="wordmark-icon"><i data-lucide="radio"></i></span>signal<span class="wordmark-period">.</span></a>
-      <div class="edition-label"><span class="live-dot"></span> LIVE HEADLINES <span class="edition-divider">/</span> <span id="today-date"></span></div>
-      <div class="topbar-actions">
-        <label class="search-box" for="search-input"><i data-lucide="search"></i><input id="search-input" type="search" placeholder="Search stories" autocomplete="off" /><kbd>⌘ K</kbd></label>
-        <button class="avatar-button" type="button" aria-label="Your profile">HA</button>
+      <a class="wordmark" href="#top" aria-label="Mirsal home">
+        <svg class="wordmark-mark" viewBox="0 0 40 40" role="img" aria-label="Mirsal">
+          <rect width="40" height="40" rx="12" fill="#155eef" />
+          <rect x="8" y="7" width="24" height="26" rx="3" fill="#fff" />
+          <path d="M12 13h16M12 18h7M12 22h7" fill="none" stroke="#17243a" stroke-linecap="round" stroke-width="2" />
+          <path d="M22 24h3v5h-3zM27 20h3v9h-3z" fill="#df684f" />
+        </svg>
+        <span>Mirsal</span>
+      </a>
+      <label class="search-box" for="search-input"><i data-lucide="search"></i><input id="search-input" type="search" placeholder="Search stories" autocomplete="off" /><kbd>⌘ K</kbd></label>
+      <button class="avatar-button" id="profile-button" type="button" aria-label="Open your profile menu" aria-haspopup="menu" aria-expanded="false">HA</button>
+      <div class="profile-menu" id="profile-menu" role="menu" aria-label="Your Mirsal profile" hidden>
+        <p class="profile-menu-title">Your Mirsal edition</p>
+        <p class="profile-menu-note">Your reading preferences are saved on this device.</p>
+        <button type="button" role="menuitem" data-profile-action="saved"><i data-lucide="bookmark"></i><span>Read later</span></button>
+        <button type="button" role="menuitem" data-profile-action="topics"><i data-lucide="sliders-horizontal"></i><span>Personalize topics</span></button>
       </div>
     </header>
 
@@ -29,7 +41,7 @@
         <nav class="primary-nav" aria-label="Your edition">
           <button class="nav-item is-active" data-view="for-you"><i data-lucide="panels-top-left"></i><span>For you</span><span class="nav-count" id="feed-count"></span></button>
           <button class="nav-item" data-view="latest"><i data-lucide="clock-3"></i><span>Latest</span></button>
-          <button class="nav-item" data-view="saved"><i data-lucide="bookmark"></i><span>Saved stories</span><span class="saved-count" id="saved-count"></span></button>
+          <button class="nav-item" data-view="saved"><i data-lucide="bookmark"></i><span>Read later</span><span class="saved-count" id="saved-count"></span></button>
         </nav>
         <p class="sidebar-label topics-label">TOPICS<button class="topic-manage-button" id="manage-topics" type="button" aria-label="Personalize topics" title="Personalize topics"><i data-lucide="list-filter" aria-hidden="true"></i></button></p>
         <nav class="topic-nav" aria-label="Filter by topic">
@@ -47,24 +59,57 @@
       <main class="feed-main">
         <section class="welcome-row" aria-label="Today's edition">
           <div><p class="eyebrow" id="edition-date"></p><h1 id="feed-heading">Good morning, Hanan<span>.</span></h1><p class="welcome-subtitle" id="welcome-subtitle">Here’s what’s worth your attention today.</p></div>
-          <button class="briefing-button" id="briefing-button" type="button"><i data-lucide="headphones"></i><span>Listen to briefing</span><i data-lucide="play" class="play-icon"></i></button>
+          <div class="briefing-controls">
+            <button class="briefing-button" id="briefing-button" type="button" aria-label="Listen to today's headlines" aria-pressed="false"><i data-lucide="headphones"></i><span id="briefing-button-label">Listen to briefing</span><i data-lucide="play" class="play-icon" id="briefing-toggle-icon"></i></button>
+            <button class="briefing-stop" id="briefing-stop" type="button" aria-label="Stop listening" title="Stop listening" hidden><i data-lucide="square"></i></button>
+          </div>
         </section>
-        <div class="feed-message" id="feed-message" role="status" aria-live="polite"><span id="feed-message-text">Fetching the latest headlines…</span><button id="retry-button" type="button" hidden>Try again</button></div>
+        <div class="feed-message" id="feed-message" role="status" aria-live="polite"><span id="feed-message-text">Fetching the latest headlines…</span></div>
 
         <section class="lead-story" id="lead-story" aria-label="Top story" hidden>
           <div class="lead-copy">
+            <p class="eyebrow featured-label">FEATURED STORIES</p>
             <div class="story-meta"><span class="category-tag" id="lead-category"></span><span id="lead-time"></span></div>
-            <h2 id="lead-title"></h2>
+            <h2><a id="lead-title" class="lead-title-link" href="#"></a></h2>
             <p class="lead-deck" id="lead-deck"></p>
-            <div class="byline"><div class="author-avatar" id="lead-initials"></div><span><strong id="lead-author"></strong><small id="lead-source"></small></span><button class="icon-button save-button" id="lead-save" data-save="" type="button" aria-label="Save top story"><i data-lucide="bookmark"></i></button></div>
+            <div class="byline"><div class="author-avatar" id="lead-initials"></div><span><strong id="lead-author"></strong><small id="lead-source"></small></span><a class="icon-button lead-source-link" id="lead-source-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Open original story"><i data-lucide="external-link"></i></a><button class="icon-button share-button" id="lead-share" data-share="" type="button" aria-label="Share top story"><i data-lucide="share-2"></i></button><button class="icon-button save-button" id="lead-save" data-save="" type="button" aria-label="Save top story"><i data-lucide="bookmark"></i></button></div>
           </div>
-          <div class="lead-image-wrap"><img class="lead-image" id="lead-image" alt="" /><div class="image-caption"><span>TOP STORY</span><span id="lead-count">01 / 20</span></div></div>
+          <a class="lead-image-wrap" id="lead-image-link" href="#" aria-label="Read top story"><img class="lead-image" id="lead-image" alt="" /><div class="image-fallback lead-image-fallback" id="lead-image-fallback" hidden><i data-lucide="newspaper"></i><span>Publisher image unavailable</span></div><div class="image-caption"><span>FEATURED</span><span id="lead-count">01 / 20</span></div></a>
         </section>
 
-        <div class="section-heading"><div><p class="eyebrow">THE REST OF THE PICTURE</p><h2 id="stories-heading"><span id="stories-heading-label">Today's stories</span> <span class="story-total" id="story-total">00</span></h2></div><div class="feed-controls"><label class="country-control">Country<select id="country-select" aria-label="Choose country"><option value="us">United States</option><option value="gb">United Kingdom</option><option value="ca">Canada</option><option value="au">Australia</option><option value="in">India</option></select></label><label class="sort-control">Sort by<select id="sort-select" aria-label="Sort stories"><option value="recommended">Recommended</option><option value="latest">Latest</option></select><i data-lucide="chevron-down"></i></label></div></div>
+        <div class="section-heading"><div><p class="eyebrow">LATEST NEWS</p><h2 id="stories-heading"><span id="stories-heading-label">Latest News</span> <span class="story-total" id="story-total">00</span></h2></div><div class="feed-controls"><label class="country-control">Country<select id="country-select" aria-label="Choose country"><option value="us">United States</option><option value="gb">United Kingdom</option><option value="ca">Canada</option><option value="au">Australia</option><option value="in">India</option></select></label><label class="sort-control">Sort by<select id="sort-select" aria-label="Sort stories"><option value="recommended">Recommended</option><option value="latest">Latest</option></select><i data-lucide="chevron-down"></i></label></div></div>
 
         <section class="story-grid" id="story-grid" aria-labelledby="stories-heading"></section>
-        <div class="empty-state" id="empty-state" hidden><i class="empty-state-icon" data-lucide="newspaper" aria-hidden="true"></i><h3>No stories found</h3><p>Try a different search or topic.</p><button id="clear-filters" type="button">Clear filters</button></div>
+        <section class="editorial-section" id="editors-section" aria-labelledby="editors-heading">
+          <div class="editorial-section-heading"><div><p class="eyebrow">A BALANCED SELECTION FROM TODAY'S COVERAGE</p><h2 id="editors-heading">Editor’s Picks</h2></div></div>
+          <div class="editorial-list" id="editors-picks"></div>
+        </section>
+        <section class="editorial-section recommendations-section" id="recommendations-section" aria-labelledby="recommendations-heading">
+          <div class="editorial-section-heading"><div><p class="eyebrow">BASED ON YOUR TOPICS</p><h2 id="recommendations-heading">Recommended for You</h2></div></div>
+          <div class="editorial-list" id="recommendations-list"></div>
+          <div class="recommendations-empty" id="recommendations-empty" hidden><p>Choose topics to tailor recommendations to your interests.</p><button id="recommend-topics" type="button">Personalize topics</button></div>
+        </section>
+        <section class="saved-list" id="saved-list" aria-label="Your read later list" hidden></section>
+        <section class="empty-state" id="empty-state" hidden aria-labelledby="empty-state-title" aria-live="polite">
+          <div class="empty-state-icon" aria-hidden="true"><i data-lucide="newspaper"></i></div>
+          <h3 id="empty-state-title"></h3>
+          <p id="empty-state-description"></p>
+          <div class="empty-state-actions">
+            <button class="empty-state-primary" id="empty-primary" type="button"></button>
+            <button class="empty-state-secondary" id="clear-search" type="button" hidden>Clear search</button>
+            <button class="empty-state-secondary" id="clear-topic-filter" type="button" hidden>Clear topic filter</button>
+          </div>
+          <div class="empty-discovery" id="empty-discovery">
+            <p>Explore what’s happening</p>
+            <nav class="empty-category-list" aria-label="Explore news categories">
+              <button type="button" data-empty-topic="World">World</button>
+              <button type="button" data-empty-topic="Technology">Technology</button>
+              <button type="button" data-empty-topic="Business">Business</button>
+              <button type="button" data-empty-topic="Culture">Culture</button>
+              <button type="button" data-empty-topic="Science">Science</button>
+            </nav>
+          </div>
+        </section>
         <div class="feed-end"><span></span><p>YOU'RE ALL CAUGHT UP</p><span></span></div>
       </main>
 
@@ -74,20 +119,52 @@
           <h2>In this edition<span>.</span></h2>
           <p class="briefing-intro">A quick scan of the latest headlines.</p>
           <ol class="briefing-list" id="briefing-list"></ol>
+          <p class="rail-empty" id="briefing-empty" role="status" hidden>Today’s brief will appear when headlines are available.</p>
           <button class="text-action" type="button" id="read-briefing">Read the full briefing <i data-lucide="arrow-right"></i></button>
         </section>
         <section class="most-read">
-          <div class="rail-title"><span>MORE HEADLINES</span><span class="trending-label"><i data-lucide="trending-up"></i> TODAY</span></div>
+          <div class="rail-title"><span>TRENDING NOW</span><span class="trending-label"><i data-lucide="trending-up"></i> FRESH</span></div>
+          <p class="trending-note">Latest headlines from today’s edition, not popularity-ranked.</p>
           <div id="more-headlines"></div>
+          <p class="rail-empty" id="trending-empty" role="status" hidden>No headlines are available right now.</p>
         </section>
-        <div class="rail-quote"><span class="quote-mark">“</span><blockquote>A well-informed mind is a quieter one.</blockquote><span class="quote-credit">THE SIGNAL NOTEBOOK</span></div>
+        <div class="rail-quote"><span class="quote-mark">“</span><blockquote>A well-informed mind is a quieter one.</blockquote><span class="quote-credit">THE MIRSAL NOTEBOOK</span></div>
       </aside>
     </div>
 
-    <dialog class="story-dialog" id="story-dialog" aria-labelledby="dialog-title"><button class="dialog-close icon-button" id="dialog-close" type="button" aria-label="Close story"><i data-lucide="x"></i></button><span class="category-tag" id="dialog-category"></span><h2 id="dialog-title"></h2><p id="dialog-deck"></p><div class="dialog-byline" id="dialog-byline"></div><a class="dialog-source" id="dialog-source" href="#" target="_blank" rel="noreferrer">Read full article <i data-lucide="arrow-up-right"></i></a></dialog>
+    <main class="article-page" id="article-page" hidden aria-labelledby="article-title">
+      <div class="article-toolbar"><button class="article-back" id="article-back" type="button"><i data-lucide="arrow-left"></i><span>Back to the edition</span></button><span class="article-masthead">MIRSAL <span>/</span> THE DAILY EDITION</span></div>
+      <p class="article-unavailable" id="article-unavailable" role="status" hidden></p>
+      <article class="article-content" id="article-content">
+        <header class="article-header">
+          <div class="article-kicker"><span class="category-tag" id="article-category"></span><span>THE MIRSAL BRIEF</span></div>
+          <h1 id="article-title" tabindex="-1"></h1>
+          <p class="article-deck" id="article-deck"></p>
+          <div class="article-byline-row">
+            <div class="article-byline"><span class="article-author-mark" id="article-initials"></span><span><strong id="article-author"></strong><small><span id="article-source"></span><span class="article-byline-dot">·</span><time id="article-time"></time></small></span></div>
+            <div class="article-actions"><button class="article-action" id="article-save" type="button" aria-pressed="false"><i data-lucide="bookmark"></i><span>Save</span></button><button class="article-action" id="article-share" type="button"><i data-lucide="share-2"></i><span>Share</span></button></div>
+          </div>
+        </header>
+        <figure class="article-hero" id="article-hero">
+          <img id="article-image" alt="" />
+          <div class="article-image-fallback" id="article-image-fallback" hidden><i data-lucide="newspaper"></i><span>Publisher image unavailable</span></div>
+          <figcaption><span id="article-caption"></span><span>IMAGE VIA PUBLISHER</span></figcaption>
+        </figure>
+        <div class="article-reading-layout">
+          <aside class="article-side-note"><span class="article-side-label">AT A GLANCE</span><p>Get the headline and publisher’s summary, then continue to the source for the complete report.</p><span class="article-reading-time"><i data-lucide="clock-3"></i> 5 MIN READ</span></aside>
+          <section class="article-body">
+            <p class="article-summary-label">THE STORY SO FAR</p>
+            <p class="article-summary" id="article-summary"></p>
+            <div class="article-source-note"><i data-lucide="info"></i><p>This edition presents the headline and summary supplied by <strong id="article-source-note"></strong>. For the full reporting and latest updates, read the original article.</p></div>
+            <a class="article-source-link" id="article-source-link" href="#" target="_blank" rel="noreferrer">Continue reading at the source <i data-lucide="arrow-up-right"></i></a>
+          </section>
+        </div>
+        <section class="article-related" aria-labelledby="article-related-title"><div class="article-related-heading"><p class="eyebrow">KEEP READING</p><h2 id="article-related-title">More from this edition</h2></div><div class="article-related-grid" id="article-related-grid"></div></section>
+      </article>
+    </main>
     <dialog class="topics-dialog" id="topics-dialog" aria-labelledby="topics-dialog-title">
       <form id="topics-form">
-        <div class="topics-dialog-heading"><span class="topics-dialog-icon"><i data-lucide="sparkles"></i></span><button class="dialog-close icon-button" id="topics-dialog-close" type="button" aria-label="Close topic preferences"><i data-lucide="x"></i></button></div>
+        <div class="topics-dialog-heading"><span class="topics-dialog-icon"><i data-lucide="sliders-horizontal"></i></span><button class="dialog-close icon-button" id="topics-dialog-close" type="button" aria-label="Close topic preferences"><i data-lucide="x"></i></button></div>
         <p class="eyebrow">YOUR EDITION</p>
         <h2 id="topics-dialog-title">Make it yours<span>.</span></h2>
         <p class="topics-dialog-description">Pick the topics you care about. We’ll bring their headlines together in your For you feed.</p>
