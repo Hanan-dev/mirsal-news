@@ -9,6 +9,9 @@
   --accent-soft: #eaf1ff;
   --accent-strong: #1045ae;
   --brand-coral: #df684f;
+  --radius-control: 8px;
+  --radius-surface: 12px;
+  --radius-chip: 6px;
   --display-font: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
   --heading-font: "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
   --sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -169,7 +172,7 @@ kbd { padding: 2px 4px; border: 1px solid #e2e4dd; border-radius: 3px; white-spa
   min-height: 42px;
   padding: 0 17px;
   border: 1px solid var(--accent);
-  border-radius: 7px;
+  border-radius: var(--radius-control);
   background: var(--accent);
   color: #fff;
   font-size: 12px;
@@ -828,7 +831,7 @@ kbd { padding: 2px 4px; border: 1px solid #e2e4dd; border-radius: 3px; white-spa
   height: 42px;
   padding-inline: 14px;
   border-color: #dce7f8;
-  border-radius: 11px;
+  border-radius: 7px;
   background: #f2f6fd;
   color: #64748b;
   transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
@@ -979,6 +982,49 @@ kbd { padding: 2px 4px; border: 1px solid #e2e4dd; border-radius: 3px; white-spa
 .article-image-fallback { width: 100%; height: 100%; min-height: 230px; display: grid; align-content: center; justify-items: center; gap: 10px; background: linear-gradient(145deg, #edf3fd, #dce8f8); color: #64748b; font-size: 12px; font-weight: 600; }
 .article-image-fallback[hidden] { display: none; }
 .article-image-fallback svg { width: 32px; height: 32px; color: var(--accent-strong); }
+
+/* Keep controls and editorial surfaces on a shared corner-radius scale. */
+.topbar > .search-box,
+.briefing-button,
+.empty-state-primary,
+.topics-save,
+.topics-cancel,
+.sort-control select,
+.country-control select,
+.nav-item,
+.topic-item,
+.icon-button,
+.topic-manage-button,
+.topics-dialog-actions button,
+.profile-menu button,
+.article-action,
+.empty-category-list button,
+.recommendations-empty button {
+  border-radius: var(--radius-control);
+}
+
+.story-card,
+.lead-story,
+.briefing-card,
+.rail-quote,
+.empty-state,
+.editorial-item,
+.recommendations-empty,
+.profile-menu,
+.topics-dialog,
+.article-unavailable,
+.article-hero,
+.article-source-note {
+  border-radius: var(--radius-surface);
+}
+
+.category-tag,
+.topic-choice,
+.empty-state-icon,
+.topics-dialog-icon,
+.saved-story-image-link {
+  border-radius: var(--radius-chip);
+}
 
 @media (max-width: 1120px) {
   .editorial-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
